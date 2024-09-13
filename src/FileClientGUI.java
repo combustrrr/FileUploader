@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.net.Socket;
 
@@ -11,7 +12,7 @@ public class FileClientGUI {
         JFrame frame = new JFrame("File Uploader");
         JButton uploadButton = new JButton("Upload File");
 
-        uploadButton.addActionListener(e -> {
+        uploadButton.addActionListener((ActionEvent _) -> {
             // Open file chooser dialog
             JFileChooser fileChooser = new JFileChooser();
             int result = fileChooser.showOpenDialog(null);
