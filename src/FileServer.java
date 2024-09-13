@@ -11,6 +11,17 @@ public class FileServer {
     private static final Logger logger = Logger.getLogger(FileServer.class.getName());
 
     public static void main(String[] args) {
+        Thread shutdownThread = new Thread(() -> {
+            try {
+                // Wait for a signal to shut down the server (e.g., a keyboard interrupt)
+                System.in.read();
+                shutdown();
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error shutting down server", e);
+            }
+        });
+        shutdownThread.start();
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server is running...");
 
