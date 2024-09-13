@@ -1,11 +1,14 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileServer {
     private static final int PORT = 5000;
     private static final String SAVE_DIR = "uploads/";
     private static volatile boolean running = true;
+    private static final Logger logger = Logger.getLogger(FileServer.class.getName());
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -20,7 +23,8 @@ public class FileServer {
                 handleFileUpload(clientSocket);
             }
         } catch (IOException e) {
-            //// Log the exception using a logging framework
+            //Log the exception using a logging framework
+            logger.log(Level.SEVERE,"Error accepting client connection",e);
         }
     }
 
@@ -37,7 +41,10 @@ public class FileServer {
             // Create directory if it doesn't exist
             File dir = new File(SAVE_DIR);
             if (!dir.exists()) {
-                dir.mkdirs();
+                if (!dir.mkdirs()) {
+                    logger.log(Level.SEVERE, "Failed to create directory: " + SAVE_DIR);
+                    // Consider throwing an exception or taking alternative action
+                }
             }
 
             // Create a file output stream to save the file
@@ -53,12 +60,14 @@ public class FileServer {
                 System.out.println("File " + fileName + " saved successfully.");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //Log the exception using a logging framework
+            logger.log(Level.SEVERE,"Error handling file upload",e);
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                //Log the exception using a logging framework
+                logger.log(Level.SEVERE,"Error closing client socket",e);
             }
         }
     }
