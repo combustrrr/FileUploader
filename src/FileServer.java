@@ -5,12 +5,13 @@ import java.net.Socket;
 public class FileServer {
     private static final int PORT = 5000;
     private static final String SAVE_DIR = "uploads/";
+    private static volatile boolean running = true;
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server is running...");
 
-            while (true) {
+            while (running) {
                 // Wait for client connection
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected: " + clientSocket.getInetAddress());
@@ -19,8 +20,12 @@ public class FileServer {
                 handleFileUpload(clientSocket);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //// Log the exception using a logging framework
         }
+    }
+
+    public static void shutdown(){
+        running = false;
     }
 
     private static void handleFileUpload(Socket clientSocket) {
